@@ -1,197 +1,232 @@
 # DataGuard AI
 
-**Scan your data. Find quality and governance risks. Understand why they matter. Generate the fix.**
+[![CI](https://github.com/adiranjan25/dataguard-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/adiranjan25/dataguard-ai/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Status: Public Beta](https://img.shields.io/badge/status-public%20beta-orange.svg)](#project-status)
 
-DataGuard AI is an open-source developer tool for **data quality, data governance, PII discovery, schema drift, and data-contract generation**. The core scanner is deterministic and works without an LLM. An optional AI provider can explain findings and recommend remediation without making detection dependent on AI.
+**Open-source, AI-assisted data quality and governance for modern data platforms.**
 
-> **MVP v0.2.0** — designed to be useful in minutes, extensible in days.
+> **Scan your data. Find quality and governance risks. Understand why they matter. Generate the fix.**
+
+DataGuard AI is a developer-first toolkit for **data quality, data governance, PII discovery, schema drift, data contracts, and CI/CD-friendly validation**. Detection is deterministic and does **not** require an LLM. Optional AI assistance can explain structured findings and suggest remediation without making quality detection dependent on a model.
+
+**Current version: v0.2.0 public beta.**
 
 ## Why DataGuard AI?
 
-Modern teams often have quality checks, catalogs, contracts, and AI assistants in separate places. DataGuard AI provides a thin developer-friendly layer that can:
+Data teams often manage quality rules, contracts, PII checks, schema drift, metadata, and AI assistants in separate workflows. DataGuard AI provides a lightweight layer developers can run locally or in CI to surface these risks through one interface.
 
-- profile CSV/Parquet data;
-- detect null, uniqueness, duplicate, numeric-range, and freshness risks;
-- detect likely PII with value- and name-based signals;
-- compute transparent quality and governance scores;
-- snapshot schemas and detect schema drift;
-- generate starter dbt tests and a portable YAML data contract;
-- export machine-readable JSON for CI/CD;
-- explain findings locally, with an optional LLM explanation mode;
-- run a complete synthetic retail demo with one command.
+### What v0.2 can do
 
-## 60-second demo
+- Profile CSV and JSON data, with optional Parquet support
+- Scan **DuckDB** and **PostgreSQL** tables
+- Run reusable **YAML data-quality rules**
+- Detect nulls, duplicate rows, uniqueness issues, range violations, and freshness risks
+- Identify likely PII using value and column-name signals
+- Compute transparent quality and governance scores
+- Generate standalone **HTML** and machine-readable **JSON** reports
+- Snapshot schemas and detect schema drift
+- Generate starter **dbt tests** and YAML data contracts
+- Export portable **Great Expectations** expectation configuration
+- Run in **GitHub Actions**
+- Explain findings locally, with optional AI-assisted remediation guidance
+
+## Quick start
+
+### Install from source during the public beta
+
+Until DataGuard AI is published to PyPI, clone the repository and install it locally:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate              # Windows: .venv\Scripts\activate
-pip install -e .
-dataguard demo
+git clone https://github.com/adiranjan25/dataguard-ai.git
+cd dataguard-ai
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
 ```
 
-Or scan your own CSV:
+Run the synthetic retail demo:
+
+```bash
+dataguard demo --rows 100
+```
+
+Or scan your own dataset:
 
 ```bash
 dataguard scan data/customers.csv
 ```
 
-JSON for automation:
+Generate JSON and HTML reports:
 
 ```bash
-dataguard scan data/customers.csv --json-out report.json
+dataguard scan data/customers.csv --json-out report.json --html-out report.html
 ```
 
-Generate a data contract and dbt tests:
+> **Coming next:** after the PyPI release, installation will become simply `pip install dataguard-ai`.
+
+## Detection philosophy
+
+> **AI assists; deterministic and statistical checks detect and verify.**
+
+The default scanning path does not require an LLM. This keeps findings reproducible and allows teams to use DataGuard AI without sending raw production datasets to an external model.
+
+## YAML rule engine
+
+Supported v0.2 custom rule types:
+
+- `not_null`
+- `unique`
+- `accepted_values`
+- `between`
+- `regex`
+- `max_null_pct`
+- `row_count_between`
+
+Example:
+
+```yaml
+quality:
+  max_null_pct: 5
+governance:
+  owner: data-platform@example.com
+rules:
+  - type: not_null
+    column: customer_id
+    severity: CRITICAL
+  - type: unique
+    column: customer_id
+  - type: accepted_values
+    column: state
+    values: [TX, CA, NY]
+  - type: between
+    column: amount
+    min: 0
+    max: 100000
+```
+
+```bash
+dataguard scan customers.csv --config dataguard.yml --html-out report.html
+```
+
+## Database scanning
+
+### DuckDB
+
+```bash
+python -m pip install -e ".[duckdb]"
+dataguard scan-duckdb analytics.duckdb --table customers --html-out report.html
+```
+
+### PostgreSQL
+
+```bash
+python -m pip install -e ".[postgres]"
+export DATAGUARD_POSTGRES_URL='postgresql+psycopg://user:password@host/database'
+dataguard scan-postgres --table public.customers --html-out report.html
+```
+
+> **Current limitation:** database scans load the selected table/result into memory. Warehouse-scale pushdown profiling is a roadmap item.
+
+## Reports
+
+```bash
+dataguard scan customers.csv --html-out report.html
+dataguard scan customers.csv --json-out report.json
+```
+
+The HTML report includes quality/governance scores, findings, severity, affected columns, suggested remediation, column profiles, and detected PII.
+
+## Data contracts and dbt
 
 ```bash
 dataguard contract data/customers.csv --out contract.yml
 dataguard generate-dbt data/customers.csv --out schema.yml
 ```
 
-Create and compare schema snapshots:
+These outputs are intended as reviewable starting points rather than replacements for domain-specific contract design.
+
+## Great Expectations
+
+```bash
+dataguard generate-gx data/customers.csv --out gx-expectations.json
+```
+
+The exporter deliberately produces reviewable configuration rather than modifying an existing Great Expectations project.
+
+## Schema drift
 
 ```bash
 dataguard snapshot data/customers.csv --out baseline.json
 dataguard drift data/customers_v2.csv --baseline baseline.json
 ```
 
-## Example output
+## GitHub Actions
 
-```text
-DataGuard AI — customers.csv
+The repository includes an example workflow at `.github/workflows/dataguard.yml` that demonstrates scanning sample data and uploading JSON/HTML reports as workflow artifacts.
 
-Quality score:    84/100
-Governance score: 68/100
+Project CI separately runs linting and automated tests against **Python 3.10, 3.11, and 3.12**.
 
-HIGH     email        7.4% null values
-HIGH     ssn          likely sensitive data (SSN)
-MEDIUM   customer_id  uniqueness 96.8%
-MEDIUM   updated_at   stale relative to configured freshness threshold
+## Optional AI explanations
 
-Suggested actions
-- Add not_null and unique checks for customer_id.
-- Classify and protect email and ssn.
-- Add a freshness expectation for updated_at.
-```
-
-## Detection philosophy
-
-**AI assists; deterministic/statistical checks detect and verify.**
-
-That separation makes results reproducible and lets teams use DataGuard AI without sending production data to an external model.
-
-## MVP architecture
-
-```text
-                 ┌──────────────────────┐
-                 │      Data source     │
-                 │ CSV / Parquet / DB*  │
-                 └──────────┬───────────┘
-                            │
-                 ┌──────────▼───────────┐
-                 │       Profiler       │
-                 │ schema / stats / PII │
-                 └──────────┬───────────┘
-                            │
-          ┌─────────────────┼──────────────────┐
-          │                 │                  │
-  ┌───────▼───────┐ ┌──────▼────────┐ ┌──────▼────────┐
-  │ Quality rules │ │ Governance     │ │ Schema drift  │
-  │ null/unique   │ │ PII/ownership  │ │ snapshots     │
-  └───────┬───────┘ └──────┬────────┘ └──────┬────────┘
-          └─────────────────┼──────────────────┘
-                            │
-                 ┌──────────▼───────────┐
-                 │ Report + score + fix │
-                 └─────┬──────────┬─────┘
-                       │          │
-                    JSON/YAML   dbt tests
-```
-
-`*` DuckDB/PostgreSQL adapters are scaffolded as optional extras in the MVP roadmap; file scanning is production-usable in v0.1.
-
-## v0.2 highlights
-
-- YAML rule engine for reusable data contracts and CI checks
-- DuckDB and PostgreSQL table scanning
-- standalone HTML quality/governance reports
-- Great Expectations expectation export
-- GitHub Actions workflow example
+Local deterministic explanations are available without an external model.
 
 ```bash
-dataguard scan customers.csv --config dataguard.example.yml --html-out report.html
-dataguard generate-gx customers.csv --out gx-expectations.json
-dataguard scan-duckdb analytics.duckdb --table customers
-dataguard scan-postgres --table public.customers
+python -m pip install -e ".[ai]"
+export OPENAI_API_KEY=...
+dataguard explain report.json --provider openai
 ```
 
-See `docs/V0.2.md` for details.
+The included provider sends structured findings rather than raw dataset rows. Always review your organization's security, privacy, and data-handling requirements before enabling an external provider.
+
+## Architecture
+
+```text
+                    Data sources
+                         |
+       +-----------------+-----------------+
+       |                 |                 |
+   CSV / JSON         DuckDB          PostgreSQL
+   / Parquet             |                 |
+       +-----------------+-----------------+
+                         |
+                         v
+                  DataGuard scanner
+                         |
+        +----------------+----------------+
+        |                |                |
+     Profiling       Rule engine     PII detection
+        |                |                |
+        +----------------+----------------+
+                         |
+                         v
+              Quality + governance
+                         |
+       +-----------+-----+------+-----------+
+       |           |            |           |
+       v           v            v           v
+      CLI         JSON         HTML    Contracts / dbt / GX
+```
+
+Detection and optional AI explanation are intentionally separated.
 
 ## Commands
 
 | Command | Purpose |
 |---|---|
-| `dataguard scan PATH` | Profile data and report quality/governance findings |
-| `dataguard demo` | Generate and scan a synthetic retail dataset |
+| `dataguard scan PATH` | Profile file data and report quality/governance findings |
+| `dataguard demo` | Generate and scan synthetic retail datasets |
+| `dataguard scan-duckdb DATABASE --table TABLE` | Scan a DuckDB table |
+| `dataguard scan-postgres --table TABLE` | Scan a PostgreSQL table |
 | `dataguard contract PATH` | Generate a starter data contract |
-| `dataguard generate-dbt PATH` | Generate dbt `schema.yml` tests |
+| `dataguard generate-dbt PATH` | Generate starter dbt tests |
+| `dataguard generate-gx PATH` | Generate portable GX expectation configuration |
 | `dataguard snapshot PATH` | Save a schema/profile baseline |
-| `dataguard drift PATH --baseline FILE` | Compare current schema with baseline |
+| `dataguard drift PATH --baseline FILE` | Compare current schema with a baseline |
 | `dataguard explain REPORT.json` | Explain findings locally or with optional AI |
 
-Run `dataguard --help` for options.
-
-## Configuration
-
-Create `dataguard.yml`:
-
-```yaml
-quality:
-  max_null_pct: 5
-  min_unique_pct_for_id: 99
-  duplicate_row_pct: 1
-
-governance:
-  require_owner: true
-  owner: data-platform@example.com
-  freshness_column: updated_at
-  max_freshness_hours: 24
-
-pii:
-  enabled: true
-```
-
-Then:
-
-```bash
-dataguard scan customers.csv --config dataguard.yml
-```
-
-## Optional AI explanations
-
-The default `explain` command is local and deterministic. To use an OpenAI-compatible explanation provider:
-
-```bash
-pip install -e ".[ai]"
-export OPENAI_API_KEY=...
-dataguard explain report.json --provider openai
-```
-
-Only the structured findings are sent by the included provider implementation—not the raw dataset. Review your organization's data-handling policies before enabling any external provider.
-
-## Retail demo
-
-The bundled demo generates synthetic:
-
-- customers;
-- orders;
-- inventory.
-
-It intentionally injects duplicate IDs, missing values, PII, invalid amounts, orphan-like identifiers, stale timestamps, and other realistic defects.
-
-```bash
-dataguard demo --rows 5000
-```
+Run `dataguard --help` for current CLI options.
 
 ## Python API
 
@@ -200,38 +235,65 @@ from dataguard.scanner import scan_path
 
 report = scan_path("customers.csv")
 print(report.quality_score)
+
 for finding in report.findings:
     print(finding.severity, finding.column, finding.message)
 ```
 
+## Retail demo
+
+The bundled synthetic retail demo creates customer, order, and inventory datasets with intentionally injected quality/governance problems so developers can explore DataGuard AI without providing proprietary data.
+
+```bash
+dataguard demo --rows 5000
+```
+
+## Project status
+
+DataGuard AI is currently a **public beta (v0.2.0)**. The API, configuration schema, scoring model, and command behavior may evolve before v1.0.
+
+The project is suitable for experimentation, development workflows, demos, and community feedback. Evaluate it against your own requirements before using it as a production control.
+
 ## Roadmap
 
-### v0.2
-- DuckDB and PostgreSQL first-class scanning
-- user-defined YAML rules
-- Great Expectations export
-- HTML report
-- GitHub Action
+### v0.3 — Metadata and context
 
-### v0.3
-- OpenMetadata/DataHub integrations
-- dbt artifacts ingestion
-- dataset-to-dataset referential checks
-- richer statistical drift
+- OpenMetadata integration
+- DataHub integration
+- dbt artifact ingestion
+- Dataset-to-dataset referential checks
+- Richer statistical drift and anomaly detection
 
-### v0.4
+### v0.4 — Agent access
+
 - MCP server
-- agent tools: `get_table_quality`, `find_pii`, `check_contract`, `explain_failure`
+- Agent-accessible quality, contract, and governance tools
 - Ollama/local-model provider
+- Governance context for AI agents
+- Assisted remediation workflows
+
+### Toward v1.0
+
+- PyPI distribution and automated release workflow
+- Warehouse-scale profiling/pushdown
+- Broader integration tests
+- Benchmark datasets and reproducible evaluation
+- Stable configuration and CLI contracts
 
 ## Contributing
 
-Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Good first contributions include new PII detectors, new exporters, sample datasets, documentation, and database adapters.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and contribution guidance.
 
-## Security
+Useful first contributions include additional PII detectors, report/export formats, documentation improvements, tests, database adapters, and integration examples.
 
-Do not submit real secrets, credentials, or production datasets in issues. See [SECURITY.md](SECURITY.md).
+## Security and privacy
+
+- Never submit secrets, credentials, or proprietary production datasets in GitHub issues.
+- Use environment variables or an appropriate secrets manager for database and model credentials.
+- Treat detected PII findings as sensitive operational metadata.
+- Review organizational security/privacy requirements before using an external AI provider.
+- See [SECURITY.md](SECURITY.md) for vulnerability-reporting guidance.
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE).
+DataGuard AI is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE).
