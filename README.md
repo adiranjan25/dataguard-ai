@@ -125,8 +125,12 @@ rules:
   - type: unique
     column: customer_id
     severity: HIGH
+```
+
+A generic column named `id` is still treated as a primary-key-like identifier by the built-in heuristic.
 
 ## Database scanning
+
 
 ### DuckDB
 
