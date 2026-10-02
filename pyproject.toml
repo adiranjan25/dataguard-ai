@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dataguard-ai"
-version = "0.2.0"
+version = "0.2.1"
 description = "Open-source data quality and governance copilot: scan data, detect risks, explain findings, and generate fixes."
 readme = "README.md"
 requires-python = ">=3.10"
