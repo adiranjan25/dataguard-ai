@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from pathlib import Path
+
 import pandas as pd
+
 
 def load_dataframe(path: str) -> pd.DataFrame:
     p = Path(path)

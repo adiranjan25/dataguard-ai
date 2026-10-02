@@ -1,7 +1,11 @@
 from __future__ import annotations
+
 from typing import Any
+
 import yaml
+
 from .models import ScanReport
+
 
 def build_contract(report: ScanReport) -> dict[str, Any]:
     columns = {}

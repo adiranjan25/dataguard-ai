@@ -1,7 +1,11 @@
 from __future__ import annotations
+
 import re
+
 import pandas as pd
+
 from .models import Finding
+
 
 def _finding(code, severity, column, message, evidence, remediation):
     return Finding(code=code, severity=severity, column=column, message=message,
@@ -55,7 +59,7 @@ def evaluate_custom_rules(df: pd.DataFrame, rules: list[dict] | None) -> list[Fi
         elif kind == "regex":
             pattern = re.compile(rule["pattern"])
             vals = s.dropna().astype(str)
-            count = int((~vals.map(lambda x: bool(pattern.fullmatch(x)))).sum())
+            count = int((~vals.map(pattern.fullmatch).map(bool)).sum())
             if count:
                 findings.append(_finding("RULE_REGEX", severity, col, f"{count} values violate regex",
                     {"unexpected_count": count, "pattern": rule["pattern"]}, f"Normalize or reject malformed {col} values."))

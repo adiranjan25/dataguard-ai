@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from pathlib import Path
-from datetime import datetime, timezone
+
 import pandas as pd
 
 from .config import load_config
@@ -8,6 +9,7 @@ from .io import load_dataframe
 from .models import ColumnProfile, Finding, ScanReport
 from .pii import detect_pii
 from .rules import evaluate_custom_rules
+
 
 def _sev_for_null(null_pct: float, threshold: float) -> str:
     if null_pct >= max(25.0, threshold * 4):

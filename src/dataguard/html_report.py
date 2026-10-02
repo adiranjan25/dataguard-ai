@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from html import escape
 from pathlib import Path
+
 from .models import ScanReport
+
 
 def _badge(sev):
     cls={"CRITICAL":"crit","HIGH":"high","MEDIUM":"med","LOW":"low"}.get(sev,"low")

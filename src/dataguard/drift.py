@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import Any
+
 from .models import ScanReport
+
 
 def snapshot(report: ScanReport) -> dict[str, Any]:
     return {

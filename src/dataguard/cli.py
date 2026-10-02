@@ -1,21 +1,23 @@
 from __future__ import annotations
-from pathlib import Path
+
 import json
+from pathlib import Path
+
 import typer
 from rich.console import Console
 from rich.table import Table
 
-from .scanner import scan_path
-from .exporters import build_contract, build_dbt_schema, dump_yaml
-from .drift import snapshot as make_snapshot, compare
-from .demo import generate_retail_demo
-from .models import ScanReport
-from .explain import local_explanation, openai_explanation
-from .html_report import write_html
-from .gx_exporter import build_gx_expectations
-from .sources import load_duckdb, load_postgres
-from .scanner import scan_dataframe
 from .config import load_config
+from .demo import generate_retail_demo
+from .drift import compare
+from .drift import snapshot as make_snapshot
+from .explain import local_explanation, openai_explanation
+from .exporters import build_contract, build_dbt_schema, dump_yaml
+from .gx_exporter import build_gx_expectations
+from .html_report import write_html
+from .models import ScanReport
+from .scanner import scan_dataframe, scan_path
+from .sources import load_duckdb, load_postgres
 
 app = typer.Typer(help="DataGuard AI — data quality & governance copilot.", no_args_is_help=True)
 console = Console()

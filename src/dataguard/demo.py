@@ -1,8 +1,11 @@
 from __future__ import annotations
-from pathlib import Path
-from datetime import datetime, timedelta, timezone
+
 import random
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
 import pandas as pd
+
 
 def generate_retail_demo(out_dir: str, rows: int = 1000, seed: int = 42) -> list[Path]:
     random.seed(seed)

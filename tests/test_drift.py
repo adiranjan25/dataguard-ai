@@ -1,7 +1,9 @@
 import pandas as pd
-from dataguard.scanner import scan_dataframe
-from dataguard.drift import snapshot, compare
+
 from dataguard.config import DEFAULT_CONFIG
+from dataguard.drift import compare, snapshot
+from dataguard.scanner import scan_dataframe
+
 
 def test_added_column_drift():
     old = scan_dataframe(pd.DataFrame({"id": [1, 2]}), config=DEFAULT_CONFIG)

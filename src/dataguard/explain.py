@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 import os
+
 from .models import ScanReport
+
 
 def local_explanation(report: ScanReport) -> str:
     if not report.findings:

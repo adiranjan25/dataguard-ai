@@ -1,6 +1,8 @@
 import pandas as pd
-from dataguard.scanner import scan_dataframe
+
 from dataguard.config import DEFAULT_CONFIG
+from dataguard.scanner import scan_dataframe
+
 
 def test_scan_finds_duplicate_id_and_pii():
     df = pd.DataFrame({

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from .models import ScanReport
+
 
 def build_gx_expectations(report: ScanReport) -> dict:
     """Portable GX expectation configuration. It can be translated into GX Core objects by the user's GX project."""

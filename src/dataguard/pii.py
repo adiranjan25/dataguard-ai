@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 import re
+
 import pandas as pd
 
 PATTERNS = {
-    "EMAIL": re.compile(r"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$", re.I),
+    "EMAIL": re.compile(r"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$", re.IGNORECASE),
     "SSN": re.compile(r"^\d{3}-\d{2}-\d{4}$"),
     "PHONE": re.compile(r"^\+?1?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$"),
     "IP_ADDRESS": re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$"),
