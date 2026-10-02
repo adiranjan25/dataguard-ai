@@ -8,3 +8,10 @@ build/
 *.egg-info/
 .dataguard-demo/
 .env
+
+# macOS
+.DS_Store
+
+# Coverage
+.coverage
+htmlcov/
