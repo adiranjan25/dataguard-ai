@@ -1,0 +1,5 @@
+customer_id,email,state,amount
+1,a@example.com,TX,25
+2,b@example.com,CA,30
+3,,NY,45
+4,d@example.com,TX,60

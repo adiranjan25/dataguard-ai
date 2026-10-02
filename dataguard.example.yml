@@ -1,0 +1,30 @@
+quality:
+  max_null_pct: 5
+  min_unique_pct_for_id: 99
+  duplicate_row_pct: 1
+
+governance:
+  require_owner: true
+  owner: data-platform@example.com
+  freshness_column: updated_at
+  max_freshness_hours: 24
+
+pii:
+  enabled: true
+
+rules:
+  - type: not_null
+    column: customer_id
+    severity: CRITICAL
+  - type: unique
+    column: customer_id
+  - type: accepted_values
+    column: state
+    values: [TX, CA, NY, FL, WA]
+  - type: between
+    column: amount
+    min: 0
+    max: 100000
+  - type: max_null_pct
+    column: email
+    value: 10

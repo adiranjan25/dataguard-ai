@@ -1,0 +1,27 @@
+name: DataGuard AI
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+jobs:
+  data-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install DataGuard AI
+        run: pip install .
+      - name: Scan sample data
+        run: |
+          dataguard scan examples/sample_customers.csv \
+            --config examples/dataguard.yml \
+            --json-out dataguard-report.json \
+            --html-out dataguard-report.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dataguard-report
+          path: |
+            dataguard-report.json
+            dataguard-report.html

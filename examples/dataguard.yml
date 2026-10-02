@@ -1,0 +1,12 @@
+quality:
+  max_null_pct: 10
+governance:
+  owner: demo-data-team
+rules:
+  - type: not_null
+    column: customer_id
+  - type: unique
+    column: customer_id
+  - type: accepted_values
+    column: state
+    values: [TX, CA, NY]

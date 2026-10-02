@@ -1,0 +1,22 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? Do not include sensitive production data.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Minimal steps and synthetic sample data if needed.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: DataGuard AI version
