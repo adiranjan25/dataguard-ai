@@ -1,22 +1,82 @@
 name: Bug report
 description: Report reproducible incorrect behavior
 title: "[Bug]: "
+labels:
+  - bug
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem with DataGuard AI.
+
+        Please do not include credentials, API keys, proprietary production data, or sensitive personal information. Use synthetic or anonymized data when a sample is needed.
+
+        For suspected security vulnerabilities, please use the repository's private vulnerability reporting process instead of opening a public issue.
+
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: What happened? Do not include sensitive production data.
+      description: What happened?
     validations:
       required: true
+
   - type: textarea
     id: reproduce
     attributes:
-      label: Reproduction
-      description: Minimal steps and synthetic sample data if needed.
+      label: Steps to reproduce
+      description: Provide minimal steps, commands, configuration, and synthetic sample data if needed.
+      placeholder: |
+        1. Install ...
+        2. Run ...
+        3. Observe ...
     validations:
       required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect DataGuard AI to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Include relevant error output or traceback.
+    validations:
+      required: true
+
   - type: input
     id: version
     attributes:
       label: DataGuard AI version
+      description: For example, 0.2.1. You can check with `pip show dataguard-ai`.
+      placeholder: "0.2.1"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      description: Output of `python --version`.
+      placeholder: "Python 3.12.15"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "macOS 15, Ubuntu 24.04, Windows 11"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other non-sensitive information that may help reproduce or diagnose the issue.
