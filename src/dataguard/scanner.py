@@ -16,9 +16,6 @@ def _sev_for_null(null_pct: float, threshold: float) -> str:
         return "HIGH"
     return "MEDIUM"
 
-def _looks_like_id(name: str) -> bool:
-    low = name.lower()
-    return low == "id" or low.endswith("_id") or low.startswith("id_")
 
 def _quality_score(findings: list[Finding]) -> int:
     weights = {"LOW": 2, "MEDIUM": 5, "HIGH": 10, "CRITICAL": 20}
@@ -76,7 +73,7 @@ def scan_dataframe(df: pd.DataFrame, source: str = "<dataframe>", config: dict |
                 remediation=f"Investigate missing {col} values; add a not-null rule if the field is required."
             ))
 
-        if _looks_like_id(str(col)) and unique_pct < float(qcfg["min_unique_pct_for_id"]):
+        if str(col).lower() == "id" and unique_pct < float(qcfg["min_unique_pct_for_id"]):
             findings.append(Finding(
                 code="ID_UNIQUENESS", severity="HIGH", column=str(col),
                 message=f"ID-like column is only {unique_pct}% unique",

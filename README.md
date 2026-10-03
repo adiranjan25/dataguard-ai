@@ -11,7 +11,7 @@
 
 DataGuard AI is a developer-first toolkit for **data quality, data governance, PII discovery, schema drift, data contracts, and CI/CD-friendly validation**. Detection is deterministic and does **not** require an LLM. Optional AI assistance can explain structured findings and suggest remediation without making quality detection dependent on a model.
 
-**Current version: v0.2.0 public beta.**
+**Current version: v0.2.1 public beta.**
 
 ## Why DataGuard AI?
 
@@ -34,16 +34,10 @@ Data teams often manage quality rules, contracts, PII checks, schema drift, meta
 
 ## Quick start
 
-### Install from source during the public beta
-
-Until DataGuard AI is published to PyPI, clone the repository and install it locally:
+### Install from PyPI
 
 ```bash
-git clone https://github.com/adiranjan25/dataguard-ai.git
-cd dataguard-ai
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
+pip install dataguard-ai
 ```
 
 Run the synthetic retail demo:
@@ -64,7 +58,17 @@ Generate JSON and HTML reports:
 dataguard scan data/customers.csv --json-out report.json --html-out report.html
 ```
 
-> **Coming next:** after the PyPI release, installation will become simply `pip install dataguard-ai`.
+### Install from source
+
+For development or contributing:
+
+```bash
+git clone https://github.com/adiranjan25/dataguard-ai.git
+cd dataguard-ai
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
 
 ## Detection philosophy
 
@@ -110,19 +114,35 @@ rules:
 dataguard scan customers.csv --config dataguard.yml --html-out report.html
 ```
 
+### Explicit uniqueness rules
+
+DataGuard does not assume that every column ending in `_id` is a primary key. Columns such as `customer_id` or `store_id` often represent foreign keys and may legitimately contain repeated values.
+
+When uniqueness is part of the dataset contract, declare it explicitly:
+
+```yaml
+rules:
+  - type: unique
+    column: customer_id
+    severity: HIGH
+```
+
+A generic column named `id` is still treated as a primary-key-like identifier by the built-in heuristic.
+
 ## Database scanning
+
 
 ### DuckDB
 
 ```bash
-python -m pip install -e ".[duckdb]"
+pip install "dataguard-ai[duckdb]"
 dataguard scan-duckdb analytics.duckdb --table customers --html-out report.html
 ```
 
 ### PostgreSQL
 
 ```bash
-python -m pip install -e ".[postgres]"
+pip install "dataguard-ai[postgres]"
 export DATAGUARD_POSTGRES_URL='postgresql+psycopg://user:password@host/database'
 dataguard scan-postgres --table public.customers --html-out report.html
 ```
@@ -173,7 +193,7 @@ Project CI separately runs linting and automated tests against **Python 3.10, 3.
 Local deterministic explanations are available without an external model.
 
 ```bash
-python -m pip install -e ".[ai]"
+pip install "dataguard-ai[ai]"
 export OPENAI_API_KEY=...
 dataguard explain report.json --provider openai
 ```
@@ -250,7 +270,7 @@ dataguard demo --rows 5000
 
 ## Project status
 
-DataGuard AI is currently a **public beta (v0.2.0)**. The API, configuration schema, scoring model, and command behavior may evolve before v1.0.
+DataGuard AI is currently a **public beta (v0.2.1)**. The API, configuration schema, scoring model, and command behavior may evolve before v1.0.
 
 The project is suitable for experimentation, development workflows, demos, and community feedback. Evaluate it against your own requirements before using it as a production control.
 
