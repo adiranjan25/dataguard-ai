@@ -4,10 +4,12 @@ Thank you for contributing.
 
 ## Development setup
 
+Python 3.10 or newer is required.
+
 ```bash
 git clone <your-fork>
 cd dataguard-ai
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 pytest

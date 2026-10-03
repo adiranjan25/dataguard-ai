@@ -1,6 +1,7 @@
 # DataGuard AI
 
 [![CI](https://github.com/adiranjan25/dataguard-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/adiranjan25/dataguard-ai/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/dataguard-ai.svg)](https://pypi.org/project/dataguard-ai/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Status: Public Beta](https://img.shields.io/badge/status-public%20beta-orange.svg)](#project-status)
@@ -13,9 +14,42 @@ DataGuard AI is a developer-first toolkit for **data quality, data governance, P
 
 **Current version: v0.2.1 public beta.**
 
+**Links:** [PyPI](https://pypi.org/project/dataguard-ai/) · [Releases](https://github.com/adiranjan25/dataguard-ai/releases) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+
 ## Why DataGuard AI?
 
 Data teams often manage quality rules, contracts, PII checks, schema drift, metadata, and AI assistants in separate workflows. DataGuard AI provides a lightweight layer developers can run locally or in CI to surface these risks through one interface.
+
+## 30-second example
+
+Install and run the demo:
+
+```bash
+pip install dataguard-ai
+dataguard demo --rows 100
+```
+
+Example findings:
+
+```text
+DataGuard AI — customers.csv
+Quality score: 95/100
+Governance score: 61/100
+
+HIGH    first_name   Likely sensitive data: PERSON_NAME
+MEDIUM  email        8.0% null values
+HIGH    email        Likely sensitive data: EMAIL
+HIGH    ssn          Likely sensitive data: SSN
+
+DataGuard AI — orders.csv
+MEDIUM  amount       Negative values detected in a non-negative business measure
+
+DataGuard AI — inventory.csv
+MEDIUM  inventory    Negative values detected in a non-negative business measure
+```
+
+The demo uses synthetic retail data, so you can explore the project without providing proprietary datasets.
+
 
 ### What v0.2 can do
 
@@ -294,7 +328,6 @@ The project is suitable for experimentation, development workflows, demos, and c
 
 ### Toward v1.0
 
-- PyPI distribution and automated release workflow
 - Warehouse-scale profiling/pushdown
 - Broader integration tests
 - Benchmark datasets and reproducible evaluation
