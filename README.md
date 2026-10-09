@@ -20,6 +20,24 @@ DataGuard AI is a developer-first toolkit for **data quality, data governance, P
 
 Data teams often manage quality rules, contracts, PII checks, schema drift, metadata, and AI assistants in separate workflows. DataGuard AI provides a lightweight layer developers can run locally or in CI to surface these risks through one interface.
 
+
+## See DataGuard AI in Action
+
+Try the demo:
+
+```bash
+pip install dataguard-ai==0.2.1
+dataguard demo --rows 100
+```
+
+### Example Quality Report
+
+![DataGuard AI Quality Report](dataguard-ai-report-screenshot.png)
+
+See how DataGuard AI identifies data quality
+and governance risks using synthetic sample data.
+  
+
 ## 30-second example
 
 Install and run the demo:
