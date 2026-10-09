@@ -38,6 +38,11 @@ See how DataGuard AI identifies data quality
 and governance risks using synthetic sample data.
   
 
+### Demo Walkthrough
+
+[▶ Watch DataGuard AI Demo](https://github.com/user-attachments/assets/c2fbd6a7-a26f-467a-8dac-f5fe224483a8)
+
+
 ## 30-second example
 
 Install and run the demo:
